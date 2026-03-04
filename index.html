@@ -764,9 +764,11 @@
             <div class="modal city-modal" id="cityModal">
                 <div class="content">
                     <div class="title">选择城市</div>
-                    <div class="location">自动定位：湖南省湘潭市</div>
+                    <!-- 核心修改1：将静态定位文本改为动态可替换的span -->
+                    <div class="location">自动定位：<span id="autoLocationText">正在定位...</span></div>
                     <div class="manual-input">
-                        <input type="text" placeholder="手动输入地址">
+                        <!-- 核心修改2：给手动输入框加ID，方便获取值 -->
+                        <input type="text" id="manualAddressInput" placeholder="手动输入地址">
                     </div>
                     <div class="btn-group">
                         <button class="cancel" id="cancelBtn">取消</button>
@@ -1562,7 +1564,7 @@
             viewAllBtn.textContent = '查看全部';
         }
 
-        // ========== 商品列表页逻辑（保留） ==========
+        // ========== 商品列表页逻辑（核心修改：自动定位从后端接口获取） ==========
         // Tab切换
         tabItems.forEach(item => {
             item.addEventListener('click', () => {
@@ -1578,133 +1580,42 @@
             });
         });
 
-        // 地址选择弹窗
+        // 地址选择弹窗 - 核心修改3：点击后请求后端top接口获取定位数据
         const cityBtn = document.getElementById('cityBtn');
         const cityModal = document.getElementById('cityModal');
         const cancelBtn = document.getElementById('cancelBtn');
         const confirmBtn = document.getElementById('confirmBtn');
+        const autoLocationText = document.getElementById('autoLocationText'); // 新增：获取动态定位文本元素
+        const manualAddressInput = document.getElementById('manualAddressInput'); // 新增：获取手动输入框元素
         
-        cityBtn.addEventListener('click', () => {
+        cityBtn.addEventListener('click', async () => {
             cityModal.style.display = 'flex';
+            autoLocationText.textContent = '正在定位...'; // 显示加载状态
+            
+            try {
+                // 调用后端top接口（暂时用此接口名）获取定位数据
+                // 实际接口返回格式建议：{ code: 200, data: { address: '湖南省湘潭市岳塘区' } }
+                const response = await axios.get(`${BASE_API_URL}/top`);
+                const locationData = response.data.data;
+                
+                // 更新自动定位文本
+                autoLocationText.textContent = locationData.address || '定位失败，请手动输入';
+            } catch (error) {
+                console.error('获取定位数据失败：', error);
+                autoLocationText.textContent = '定位失败，请手动输入';
+                showToast('定位失败，请手动输入地址');
+            }
         });
+
         cancelBtn.addEventListener('click', () => {
             cityModal.style.display = 'none';
+            manualAddressInput.value = ''; // 清空手动输入框
         });
+
+        // 核心修改4：确认按钮逻辑 - 优先手动输入，其次自动定位
         confirmBtn.addEventListener('click', () => {
-            const inputVal = document.querySelector('.manual-input input').value;
-            if (inputVal) {
-                cityBtn.textContent = inputVal;
-            }
-            cityModal.style.display = 'none';
-        });
-
-        // 分类筛选
-        const categoryItems = document.querySelectorAll('.category .item');
-        categoryItems.forEach(item => {
-            item.addEventListener('click', () => {
-                categoryItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                renderGoodsList(searchInput.value.trim());
-            });
-        });
-
-        // 渲染商品列表
-        const goodsList = document.getElementById('goodsList');
-        const loadingTip = document.getElementById('loadingTip');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const searchTips = document.getElementById('searchTips');
-        
-        async function renderGoodsList(keyword = '') {
-            loadingTip.style.display = 'block';
-            try {
-                const response = await axios.get(`${BASE_API_URL}/products`, {
-                    params: {
-                        keyword: keyword,
-                        page: 1,
-                        size: 20
-                    }
-                });
-                const products = response.data.data || [];
-                loadingTip.style.display = 'none';
-                
-                goodsList.innerHTML = '';
-                if (products.length === 0) {
-                    goodsList.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">暂无相关农产品</div>';
-                    return;
-                }
-                
-                products.forEach(item => {
-                    const goodsItem = document.createElement('div');
-                    goodsItem.className = 'goods-item';
-                    goodsItem.setAttribute('data-id', item.id);
-                    goodsItem.innerHTML = `
-                        <div class="name">${item.name || '未命名农产品'}</div>
-                        <div class="spec">${item.spec || '无规格信息'}</div>
-                        <div class="price">¥${item.price || 0.00}</div>
-                        <div class="origin">产地：${item.address || '未知产地'}</div>
-                        <div class="contact">库存：${item.stock || 0}件</div>
-                    `;
-                    goodsList.appendChild(goodsItem);
-
-                    // 点击查看详情
-                    goodsItem.addEventListener('click', async () => {
-                        const detail = await getProductDetail(item.id);
-                        if (detail) {
-                            showGoodsDetail(detail);
-                        }
-                    });
-                });
-            } catch (error) {
-                console.error('获取商品列表失败：', error);
-                loadingTip.style.display = 'none';
-                if (error.response?.status !== 401) {
-                    showToast('获取商品列表失败，请重试');
-                }
-                goodsList.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">加载失败，请重试</div>';
-            }
-        }
-
-        // 获取商品详情
-        async function getProductDetail(id) {
-            try {
-                const response = await axios.get(`${BASE_API_URL}/products/${id}`);
-                return response.data.data;
-            } catch (error) {
-                console.error('获取商品详情失败：', error);
-                if (error.response?.status !== 401) {
-                    showToast('获取商品详情失败，请重试');
-                }
-                return null;
-            }
-        }
-
-        // 搜索逻辑
-        const handleSearch = debounce(async function() {
-            const keyword = searchInput.value.trim();
-            await renderGoodsList(keyword);
-            searchTips.style.display = keyword ? 'block' : 'none';
-        });
-
-        searchInput.addEventListener('input', handleSearch);
-        searchBtn.addEventListener('click', async () => {
-            const keyword = searchInput.value.trim();
-            await renderGoodsList(keyword);
-            searchTips.style.display = 'none';
-        });
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                searchBtn.click();
-            }
-        });
-        document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !searchTips.contains(e.target) && !searchBtn.contains(e.target)) {
-                searchTips.style.display = 'none';
-            }
-        });
-
-        // 初始化
-        renderGoodsList();
-    </script>
-</body>
-</html>
+            const manualVal = manualAddressInput.value.trim();
+            const autoVal = autoLocationText.textContent;
+            
+            let selectedAddress = '';
+            //
