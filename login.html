@@ -72,7 +72,7 @@
             display: flex;
         }
 
-        /* 头像触发按钮 */
+        /* 头像触发按钮 - 关键修改：新增头像显示样式 */
         .avatar-trigger-wrap {
             display: flex;
             justify-content: center;
@@ -90,6 +90,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            /* 新增：支持背景图片显示 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        /* 新增：选中头像后隐藏+号 */
+        .avatar-add-btn.has-avatar {
+            font-size: 0;
         }
 
         /* 表单输入框样式 */
@@ -266,13 +274,6 @@
                     <div class="grid-item" data-avatar="https://picsum.photos/200/200?random=4">
                         <img src="https://picsum.photos/200/200?random=4" alt="头像">
                     </div>
-                    <div class="grid-item"></div>
-                    <div class="grid-item"></div>
-                    <div class="grid-item"></div>
-                    <div class="grid-item"></div>
-                    <div class="grid-item"></div>
-                    <div class="grid-item"></div>
-                    <div class="grid-item"></div>
                 </div>
                 <div class="grid-tip">可上下滑动</div>
             </div>
@@ -290,6 +291,11 @@
         const avatarSection = document.getElementById('avatarSection');
         const codeLoginCard = document.getElementById('codeLoginCard');
         const pwdLoginCard = document.getElementById('pwdLoginCard');
+        // 关键修改：获取两个头像按钮
+        const avatarTrigger = document.getElementById('avatarTrigger');
+        const avatarTrigger2 = document.getElementById('avatarTrigger2');
+        // 全局变量：存储选中的头像URL
+        let selectedAvatarUrl = '';
 
         // 1. 欢迎页交互：注册/登录按钮跳转
         document.getElementById('signUpBtn').addEventListener('click', () => {
@@ -306,10 +312,14 @@
         document.getElementById('toPwdLogin').addEventListener('click', () => {
             codeLoginCard.classList.remove('active');
             pwdLoginCard.classList.add('active');
+            // 关键修改：切换登录方式时同步头像
+            syncAvatarDisplay();
         });
         document.getElementById('toCodeLogin').addEventListener('click', () => {
             pwdLoginCard.classList.remove('active');
             codeLoginCard.classList.add('active');
+            // 关键修改：切换登录方式时同步头像
+            syncAvatarDisplay();
         });
 
         // 3. 头像页面交互
@@ -317,23 +327,45 @@
             loginContainer.classList.remove('active');
             avatarSection.classList.add('active');
         };
-        document.getElementById('avatarTrigger').addEventListener('click', toAvatarPage);
-        document.getElementById('avatarTrigger2').addEventListener('click', toAvatarPage);
+        avatarTrigger.addEventListener('click', toAvatarPage);
+        avatarTrigger2.addEventListener('click', toAvatarPage);
         document.getElementById('avatarBackBtn').addEventListener('click', () => {
             avatarSection.classList.remove('active');
             loginContainer.classList.add('active');
         });
 
-        // 4. 头像选择/上传交互
+        // 关键修改：新增函数 - 同步显示选中的头像到按钮
+        function syncAvatarDisplay() {
+            if (selectedAvatarUrl) {
+                // 给按钮设置背景图片，并添加标识类隐藏+号
+                avatarTrigger.style.backgroundImage = `url(${selectedAvatarUrl})`;
+                avatarTrigger.classList.add('has-avatar');
+                avatarTrigger2.style.backgroundImage = `url(${selectedAvatarUrl})`;
+                avatarTrigger2.classList.add('has-avatar');
+            } else {
+                // 无选中头像时恢复默认样式
+                avatarTrigger.style.backgroundImage = '';
+                avatarTrigger.classList.remove('has-avatar');
+                avatarTrigger2.style.backgroundImage = '';
+                avatarTrigger2.classList.remove('has-avatar');
+            }
+        }
+
+        // 4. 头像选择/上传交互 - 关键修改
         const avatarItems = document.querySelectorAll('.grid-item[data-avatar]');
         avatarItems.forEach(item => {
             item.addEventListener('click', () => {
-                const avatarUrl = item.getAttribute('data-avatar');
-                alert(`已选择头像：${avatarUrl}`);
+                selectedAvatarUrl = item.getAttribute('data-avatar');
+                // 同步显示头像到按钮
+                syncAvatarDisplay();
+                // 提示并返回登录页
+                alert(`已选择头像：${selectedAvatarUrl}`);
                 avatarSection.classList.remove('active');
                 loginContainer.classList.add('active');
             });
         });
+
+        // 关键修改：上传头像并实时显示
         document.getElementById('uploadAvatarBtn').addEventListener('click', () => {
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
@@ -341,7 +373,17 @@
             fileInput.onchange = (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    alert(`已选择上传文件：${file.name}`);
+                    // 创建文件预览URL
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        selectedAvatarUrl = event.target.result;
+                        // 同步显示上传的头像到按钮
+                        syncAvatarDisplay();
+                        alert(`已选择上传头像：${file.name}`);
+                        avatarSection.classList.remove('active');
+                        loginContainer.classList.add('active');
+                    };
+                    reader.readAsDataURL(file);
                 }
             };
             fileInput.click();
@@ -383,7 +425,8 @@
                     },
                     body: JSON.stringify({
                         username: userName,
-                        phone: phone
+                        phone: phone,
+                        avatar: selectedAvatarUrl // 关键修改：携带头像URL到后端
                     })
                 });
 
@@ -428,7 +471,8 @@
                     },
                     body: JSON.stringify({
                         username: userName,
-                        password: password
+                        password: password,
+                        avatar: selectedAvatarUrl // 关键修改：携带头像URL到后端
                     })
                 });
 
