@@ -86,7 +86,7 @@
             display: none;
         }
 
-        /* ========== 农产品列表页样式（保留） ========== */
+        /* ========== 农产品列表页样式 ========== */
         .header {
             display: flex;
             align-items: center;
@@ -173,28 +173,6 @@
             border-radius: 8px;
             padding: 20px;
         }
-        .city-modal .content .title {
-            font-size: 16px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .city-modal .content .location {
-            margin-bottom: 10px;
-            padding: 8px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            color: #666;
-        }
-        .city-modal .content .manual-input {
-            margin-bottom: 15px;
-        }
-        .city-modal .content .manual-input input {
-            width: 100%;
-            height: 35px;
-            padding: 0 10px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
         .goods-list {
             padding: 10px 15px;
         }
@@ -233,28 +211,13 @@
             font-size: 12px;
             margin-top: 5px;
         }
-        .search-tips {
-            position: absolute;
-            top: 56px;
-            left: 15px;
-            right: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 98;
-            padding: 10px 0;
-            display: none;
-        }
-        .search-tips .tip-item {
-            padding: 8px 15px;
-            color: #333;
-            cursor: pointer;
-        }
-        .search-tips .tip-item:hover {
-            background-color: #f8f8f8;
+        .loading-tip {
+            text-align:center; 
+            padding:20px; 
+            color:#999;
         }
 
-        /* ========== 发布页面样式（保留） ========== */
+        /* ========== 发布页面样式 ========== */
         .publish-page {
             background-color: #f9f9f9;
         }
@@ -273,12 +236,6 @@
             font-size: 18px;
             color: #333;
             cursor: pointer;
-        }
-        .publish-type-select {
-            display: flex;
-            align-items: center;
-            font-size: 15px;
-            color: #333;
         }
         .publish-type-select select {
             border: none;
@@ -387,18 +344,6 @@
             padding: 2px 0;
             width: 100%;
         }
-        .form-value input::placeholder {
-            color: #ccc;
-        }
-        .form-value .arrow {
-            font-size: 12px;
-            color: #ccc;
-            margin-left: 5px;
-        }
-        .form-value .price-text {
-            color: #ff4400;
-            font-weight: bold;
-        }
         .count-limit {
             font-size: 12px;
             color: #999;
@@ -416,16 +361,8 @@
             min-height: 60px;
             padding: 5px 0;
         }
-        .price-type-modal .content {
+        .price-type-modal .content, .price-select-modal .content, .address-select-modal .content {
             padding: 15px;
-        }
-        .price-type-title {
-            font-size: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .price-type-list {
-            margin-bottom: 20px;
         }
         .price-type-item {
             padding: 10px;
@@ -444,9 +381,6 @@
             color: #666;
             border: 1px solid #eee;
         }
-        .price-select-modal .content {
-            padding: 15px;
-        }
         .price-select-input {
             width: 100%;
             padding: 10px;
@@ -456,15 +390,6 @@
             text-align: center;
             margin-bottom: 15px;
         }
-        .price-unit {
-            text-align: center;
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 20px;
-        }
-        .address-select-modal .content {
-            padding: 15px;
-        }
         .address-input {
             width: 100%;
             padding: 10px;
@@ -472,11 +397,6 @@
             border-radius: 8px;
             font-size: 14px;
             margin-bottom: 10px;
-        }
-        .address-tips {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 20px;
         }
         .location-btn {
             width: 100%;
@@ -491,12 +411,11 @@
             cursor: pointer;
         }
 
-        /* ========== 重构：商品详情页样式（匹配参考图片） ========== */
+        /* ========== 商品详情页样式 ========== */
         .detail-page {
             background-color: #fff;
             padding-bottom: 60px;
         }
-        /* 详情页顶部返回栏 */
         .detail-header-bar {
             position: sticky;
             top: 0;
@@ -512,8 +431,6 @@
             cursor: pointer;
             display: inline-block;
         }
-
-        /* 商品图片轮播区 */
         .detail-img-swiper {
             width: 100%;
             height: 280px;
@@ -551,8 +468,6 @@
         .indicator-dot.active {
             background-color: #fff;
         }
-
-        /* 价格区域 */
         .detail-price-area {
             padding: 15px;
             border-bottom: 1px solid #f5f5f5;
@@ -568,23 +483,12 @@
             color: #ff4400;
             font-weight: bold;
         }
-        .detail-price-unit {
-            font-size: 14px;
-            color: #666;
-        }
         .detail-sales {
             font-size: 12px;
             color: #999;
             margin-bottom: 10px;
         }
-        .detail-product-name {
-            font-size: 16px;
-            color: #333;
-            line-height: 1.4;
-        }
-
-        /* 产品信息区域 */
-        .detail-info-area {
+        .detail-info-area, .detail-desc-area, .detail-contact-area {
             padding: 15px;
             border-bottom: 1px solid #f5f5f5;
         }
@@ -592,11 +496,6 @@
             font-size: 14px;
             color: #666;
             margin-bottom: 10px;
-        }
-        .info-list {
-            font-size: 14px;
-            color: #333;
-            line-height: 1.8;
         }
         .info-item {
             display: flex;
@@ -606,9 +505,6 @@
             width: 80px;
             color: #666;
             flex-shrink: 0;
-        }
-        .info-value {
-            flex: 1;
         }
         .view-all-btn {
             margin-top: 10px;
@@ -625,33 +521,11 @@
         .info-expand.show-all {
             max-height: 500px;
         }
-
-        /* 商品描述区域 */
-        .detail-desc-area {
-            padding: 15px;
-            border-bottom: 1px solid #f5f5f5;
-        }
-        .desc-content {
-            font-size: 14px;
-            color: #333;
-            line-height: 1.6;
-            margin-top: 10px;
-        }
-
-        /* 联系我们区域 */
-        .detail-contact-area {
-            padding: 15px;
-        }
         .contact-card {
             background-color: #f8f8f8;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-        }
-        .contact-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
         }
         .avatar {
             width: 30px;
@@ -664,14 +538,10 @@
             align-items: center;
             margin-right: 10px;
         }
-        .contact-name {
-            font-size: 14px;
-            color: #333;
-            margin-right: 10px;
-        }
-        .contact-address {
-            font-size: 12px;
-            color: #999;
+        .contact-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
         }
         .contact-phone {
             font-size: 14px;
@@ -691,7 +561,7 @@
             cursor: pointer;
         }
 
-        /* ========== 我的页面样式（保留） ========== */
+        /* ========== 我的页面 & 底部Tab栏 ========== */
         .mine-header {
             padding: 10px 15px;
             background-color: #fff;
@@ -700,8 +570,6 @@
             font-weight: bold;
             text-align: center;
         }
-
-        /* ========== 底部Tab栏样式（保留） ========== */
         .tab-bar {
             position: fixed;
             bottom: 0;
@@ -752,22 +620,20 @@
 
             <!-- 分类筛选栏 -->
             <div class="category">
-                <div class="item active">蔬菜</div>
-                <div class="item">水果</div>
-                <div class="item">肉食</div>
-                <div class="item">乳饮</div>
-                <div class="item">零食</div>
-                <div class="item">全部</div>
+                <div class="item active" data-category="蔬菜">蔬菜</div>
+                <div class="item" data-category="水果">水果</div>
+                <div class="item" data-category="肉食">肉食</div>
+                <div class="item" data-category="乳饮">乳饮</div>
+                <div class="item" data-category="零食">零食</div>
+                <div class="item" data-category="全部">全部</div>
             </div>
 
             <!-- 地址选择弹窗 -->
             <div class="modal city-modal" id="cityModal">
                 <div class="content">
                     <div class="title">选择城市</div>
-                    <!-- 核心修改1：将静态定位文本改为动态可替换的span -->
                     <div class="location">自动定位：<span id="autoLocationText">正在定位...</span></div>
                     <div class="manual-input">
-                        <!-- 核心修改2：给手动输入框加ID，方便获取值 -->
                         <input type="text" id="manualAddressInput" placeholder="手动输入地址">
                     </div>
                     <div class="btn-group">
@@ -779,7 +645,7 @@
 
             <!-- 商品列表 -->
             <div class="goods-list" id="goodsList">
-                <div style="text-align:center; padding:20px; color:#999;" id="loadingTip">加载中...</div>
+                <div class="loading-tip" id="loadingTip">加载中...</div>
             </div>
         </div>
     </div>
@@ -964,7 +830,7 @@
         </div>
     </div>
 
-    <!-- 3. 商品详情页面（重构） -->
+    <!-- 3. 商品详情页面 -->
     <div class="page detail-page" id="detailPage">
         <!-- 返回栏 -->
         <div class="detail-header-bar">
@@ -1095,12 +961,93 @@
         let currentPrice = 0; // 当前价格
         let currentAddress = '一键定位'; // 当前地址
         let currentSwiperIndex = 0; // 轮播图当前索引
+        let currentCity = '湘潭市'; // 当前选中城市
+        let currentCategory = '蔬菜'; // 当前选中分类
+        
+        // 模拟商品列表数据
+        const mockGoodsList = [
+            {
+                id: 1,
+                name: '500g-550g/份 云南小娃娃菜',
+                spec: '500g-550g/份',
+                price: 3.89,
+                address: '云南省昆明市乡村县',
+                stock: 300,
+                sales: 300,
+                category: '黄心白菜',
+                variety: '蔬菜',
+                shelf_life: '三天',
+                package_method: '袋装',
+                pesticide_used: '否',
+                storage_method: '常温',
+                support_pickup: '是',
+                description: '优质娃娃菜，现摘现邮。买后一天内发货。涮火锅炒菜都好吃！',
+                seller_name: '我是昵称',
+                seller_address: '云南省昆明市',
+                seller_phone: '122334455667',
+                images: [
+                    'https://picsum.photos/600/400?random=1',
+                    'https://picsum.photos/600/400?random=2',
+                    'https://picsum.photos/600/400?random=3'
+                ]
+            },
+            {
+                id: 2,
+                name: '新鲜山东大葱 1kg装',
+                spec: '1kg/份',
+                price: 8.99,
+                address: '山东省潍坊市寿光市',
+                stock: 500,
+                sales: 200,
+                category: '大葱',
+                variety: '蔬菜',
+                shelf_life: '七天',
+                package_method: '捆装',
+                pesticide_used: '否',
+                storage_method: '冷藏',
+                support_pickup: '是',
+                description: '新鲜现挖大葱，脆甜不辣，炒菜调味佳品！',
+                seller_name: '大葱种植户',
+                seller_address: '山东省潍坊市',
+                seller_phone: '13888889999',
+                images: [
+                    'https://picsum.photos/600/400?random=4',
+                    'https://picsum.photos/600/400?random=5'
+                ]
+            },
+            {
+                id: 3,
+                name: '烟台红富士苹果 5斤装',
+                spec: '5斤/份',
+                price: 29.9,
+                address: '山东省烟台市栖霞市',
+                stock: 1000,
+                sales: 500,
+                category: '红富士',
+                variety: '水果',
+                shelf_life: '30天',
+                package_method: '箱装',
+                pesticide_used: '否',
+                storage_method: '冷藏',
+                support_pickup: '是',
+                description: '新鲜烟台红富士，脆甜多汁，现摘现发！',
+                seller_name: '苹果种植户',
+                seller_address: '山东省烟台市',
+                seller_phone: '13977778888',
+                images: [
+                    'https://picsum.photos/600/400?random=6',
+                    'https://picsum.photos/600/400?random=7'
+                ]
+            }
+        ];
 
         // ========== DOM元素 ==========
         // 通用元素
         const toast = document.getElementById('toast');
         const tabItems = document.querySelectorAll('.tab-bar .tab-item');
         const pages = document.querySelectorAll('.page');
+        const goodsList = document.getElementById('goodsList');
+        const loadingTip = document.getElementById('loadingTip');
         
         // 发布页元素
         const publishBackBtn = document.getElementById('publishBackBtn');
@@ -1149,35 +1096,21 @@
         const viewAllBtn = document.getElementById('viewAllBtn');
         const contactBtn = document.getElementById('contactBtn');
 
-        // ========== Axios拦截器（保留） ==========
-        axios.interceptors.request.use(config => {
-            const userInfo = localStorage.getItem('userInfo');
-            if (userInfo) {
-                const token = JSON.parse(userInfo).token;
-                if (token) {
-                    config.headers.Authorization = `Bearer ${token}`;
-                }
-            }
-            return config;
-        }, error => {
-            return Promise.reject(error);
-        });
+        // 城市选择弹窗元素
+        const cityBtn = document.getElementById('cityBtn');
+        const cityModal = document.getElementById('cityModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const autoLocationText = document.getElementById('autoLocationText');
+        const manualAddressInput = document.getElementById('manualAddressInput');
 
-        axios.interceptors.response.use(
-            response => response,
-            error => {
-                if (error.response?.status === 401) {
-                    showToast('登录已过期，请重新登录');
-                    localStorage.removeItem('userInfo');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                }
-                return Promise.reject(error);
-            }
-        );
+        // 搜索和分类元素
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const categoryItems = document.querySelectorAll('.category .item');
 
         // ========== 工具函数 ==========
+        // 提示框
         function showToast(message, duration = 2000) {
             toast.textContent = message;
             toast.style.display = 'block';
@@ -1186,6 +1119,7 @@
             }, duration);
         }
 
+        // 防抖函数
         function debounce(fn, delay = 300) {
             let timer = null;
             return function(...args) {
@@ -1196,7 +1130,73 @@
             };
         }
 
-        // ========== 发布页逻辑（保留） ==========
+        // ========== 商品列表渲染函数 ==========
+        function renderGoodsList(keyword = '') {
+            // 显示加载状态
+            loadingTip.style.display = 'block';
+            
+            // 模拟异步加载（简化版，避免await导致的执行问题）
+            setTimeout(() => {
+                try {
+                    let filteredGoods = [...mockGoodsList];
+                    
+                    // 分类筛选
+                    if (currentCategory !== '全部') {
+                        filteredGoods = filteredGoods.filter(item => item.variety === currentCategory);
+                    }
+                    
+                    // 关键词搜索
+                    if (keyword.trim()) {
+                        const lowerKeyword = keyword.toLowerCase();
+                        filteredGoods = filteredGoods.filter(item => 
+                            item.name.toLowerCase().includes(lowerKeyword) ||
+                            item.address.toLowerCase().includes(lowerKeyword) ||
+                            item.category.toLowerCase().includes(lowerKeyword)
+                        );
+                    }
+                    
+                    // 隐藏加载状态
+                    loadingTip.style.display = 'none';
+                    
+                    // 清空列表
+                    goodsList.innerHTML = '';
+                    
+                    // 无数据提示
+                    if (filteredGoods.length === 0) {
+                        goodsList.innerHTML = '<div class="loading-tip">暂无相关农产品</div>';
+                        return;
+                    }
+                    
+                    // 渲染商品列表
+                    filteredGoods.forEach(item => {
+                        const goodsItem = document.createElement('div');
+                        goodsItem.className = 'goods-item';
+                        goodsItem.setAttribute('data-id', item.id);
+                        goodsItem.innerHTML = `
+                            <div class="name">${item.name}</div>
+                            <div class="spec">${item.spec}</div>
+                            <div class="price">¥${item.price.toFixed(2)}</div>
+                            <div class="origin">产地：${item.address}</div>
+                            <div class="contact">库存：${item.stock}件</div>
+                        `;
+                        goodsList.appendChild(goodsItem);
+                        
+                        // 点击查看详情
+                        goodsItem.addEventListener('click', () => {
+                            showGoodsDetail(item);
+                        });
+                    });
+                } catch (error) {
+                    // 出错时也隐藏加载状态
+                    loadingTip.style.display = 'none';
+                    console.error('渲染商品列表失败：', error);
+                    goodsList.innerHTML = '<div class="loading-tip">加载失败，请重试</div>';
+                    showToast('加载失败，请重试');
+                }
+            }, 500); // 缩短加载动画时长，提升体验
+        }
+
+        // ========== 发布页逻辑 ==========
         // 图片上传
         addImgBtn.addEventListener('click', () => {
             publishFileInput.click();
@@ -1238,13 +1238,10 @@
         // 计价方式弹窗
         priceTypeRow.addEventListener('click', () => {
             priceTypeModal.style.display = 'flex';
-            // 重置选中状态
             priceTypeItems.forEach(item => {
-                if (item.dataset.type === currentPriceType) {
-                    item.className = 'price-type-item active';
-                } else {
-                    item.className = 'price-type-item normal';
-                }
+                item.className = item.dataset.type === currentPriceType 
+                    ? 'price-type-item active' 
+                    : 'price-type-item normal';
             });
         });
 
@@ -1263,7 +1260,6 @@
             const activeItem = document.querySelector('.price-type-item.active');
             currentPriceType = activeItem.dataset.type;
             showPriceType.textContent = currentPriceType;
-            // 更新价格单位
             priceUnitText.textContent = currentPriceType === '以件计价' ? '元/件' : '元/斤';
             priceTypeModal.style.display = 'none';
         });
@@ -1298,7 +1294,6 @@
 
         locationBtn.addEventListener('click', () => {
             showToast('正在定位...');
-            // 模拟定位
             setTimeout(() => {
                 currentAddress = '湖南省湘潭市岳塘区XX小区6栋201室';
                 addressInput.value = currentAddress;
@@ -1331,7 +1326,7 @@
         });
 
         // 提交发布
-        publishSubmitBtn.addEventListener('click', async () => {
+        publishSubmitBtn.addEventListener('click', () => {
             // 表单验证
             if (!uploadedImage) {
                 showToast('请上传农产品主图');
@@ -1350,49 +1345,19 @@
                 return;
             }
 
-            // 组装表单数据
-            const formData = new FormData();
-            formData.append('name', productNameInput.value.trim());
-            formData.append('variety', document.getElementById('productTypeSelect').value);
-            formData.append('price', currentPrice.toFixed(2));
-            formData.append('price_type', currentPriceType);
-            formData.append('address', currentAddress);
-            formData.append('contact', document.getElementById('contactInput').value.trim() || '');
-            formData.append('spec', document.getElementById('productSpecInput').value.trim() || '');
-            formData.append('shelf_life', document.getElementById('productShelfLifeInput').value.trim() || '');
-            formData.append('category', document.getElementById('productCategoryInput').value.trim() || '');
-            formData.append('package_method', document.getElementById('productPackageInput').value.trim() || '');
-            formData.append('pesticide_used', document.getElementById('productPesticideInput').value.trim() || '');
-            formData.append('storage_method', document.getElementById('productStorageInput').value.trim() || '');
-            formData.append('support_pickup', document.getElementById('productPickupInput').value.trim() || '');
-            formData.append('description', productDescInput.value.trim() || '');
-            formData.append('user_id', CURRENT_USER_ID);
-            formData.append('main_image', uploadedImage);
-
-            // 提交发布
-            try {
-                const response = await axios.post(`${BASE_API_URL}/products`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
+            // 模拟发布成功
+            showToast('发布成功！');
+            resetPublishForm();
+            
+            // 返回商品列表页
+            setTimeout(() => {
+                tabItems.forEach(item => {
+                    if (item.dataset.page === 'goodsPage') {
+                        item.click();
                     }
                 });
-                if (response.data.code === 200) {
-                    showToast('发布成功！');
-                    // 重置表单
-                    resetPublishForm();
-                    // ========== 关键修改：跳转到指定的login.html本地路径 ==========
-                    setTimeout(() => {
-                        // 本地文件路径需转换为file协议格式，反斜杠改为正斜杠，添加协议头
-                        const loginPath = 'file:///C:/Users/欧阳周翔/Desktop/农产品/login.html';
-                        window.location.href = loginPath;
-                    }, 1500);
-                } else {
-                    showToast(response.data.message || '发布失败');
-                }
-            } catch (error) {
-                console.error('发布失败：', error);
-                showToast(error.response?.data?.message || '发布失败，请重试');
-            }
+                renderGoodsList();
+            }, 1500);
         });
 
         // 重置发布表单
@@ -1423,7 +1388,7 @@
             showAddress.textContent = '一键定位';
         }
 
-        // ========== 重构：商品详情页逻辑 ==========
+        // ========== 商品详情页逻辑 ==========
         // 初始化轮播图
         function initSwiper(images) {
             if (!images || images.length === 0) {
@@ -1434,7 +1399,6 @@
                 ];
             }
             
-            // 清空原有内容
             swiperWrapper.innerHTML = '';
             swiperIndicator.innerHTML = '';
             currentSwiperIndex = 0;
@@ -1473,10 +1437,8 @@
                 const diffX = endX - startX;
                 
                 if (diffX > 50 && currentSwiperIndex > 0) {
-                    // 左滑
                     switchSwiper(currentSwiperIndex - 1);
                 } else if (diffX < -50 && currentSwiperIndex < images.length - 1) {
-                    // 右滑
                     switchSwiper(currentSwiperIndex + 1);
                 }
             });
@@ -1488,7 +1450,6 @@
             if (index < 0 || index >= total) return;
             
             currentSwiperIndex = index;
-            // 移动轮播容器
             swiperWrapper.style.transform = `translateX(-${index * 100}%)`;
             
             // 更新指示器
@@ -1504,13 +1465,23 @@
             viewAllBtn.textContent = infoExpand.classList.contains('show-all') ? '收起' : '查看全部';
         });
 
-        // 联系我们按钮
+        // 联系我们 - 拨号功能
         contactBtn.addEventListener('click', () => {
-            showToast('正在联系卖家...');
-            // 模拟联系
-            setTimeout(() => {
-                showToast('已获取卖家联系方式：122334455667');
-            }, 1500);
+            const phoneText = document.getElementById('contactPhone').textContent;
+            const phoneNum = phoneText.replace(/[^0-9]/g, '');
+            
+            if (!phoneNum || phoneNum.length < 11) {
+                showToast('暂无有效联系电话');
+                return;
+            }
+            
+            try {
+                window.location.href = `tel:${phoneNum}`;
+                showToast(`正在拨打：${phoneNum}`);
+            } catch (error) {
+                console.error('拨号失败：', error);
+                showToast(`拨号失败，电话：${phoneNum}，请手动拨打`);
+            }
         });
 
         // 详情页返回
@@ -1520,57 +1491,47 @@
             document.querySelector('.tab-bar').style.display = 'flex';
         });
 
-        // 显示商品详情（重构）
+        // 显示商品详情
         function showGoodsDetail(goods) {
             // 初始化轮播图
-            const images = goods.images || [
-                goods.main_image || 'https://picsum.photos/600/400?random=1',
-                'https://picsum.photos/600/400?random=2', // 菜地图片
-                'https://picsum.photos/600/400?random=3'
-            ];
-            initSwiper(images);
+            initSwiper(goods.images);
             
-            // 填充价格信息
-            document.getElementById('detailPriceNum').textContent = `¥${goods.price || 3.89}`;
-            document.getElementById('detailPriceUnit').textContent = `/份`;
-            document.getElementById('detailSales').textContent = `已售${goods.sales || 300}`;
-            document.getElementById('detailProductName').textContent = goods.name || '500g-550g/份 云南小娃娃菜';
-            
-            // 填充产品信息
-            document.getElementById('detailCategory').textContent = goods.category || '黄心白菜';
-            document.getElementById('detailSpec').textContent = goods.spec || '500g-550g/份';
-            document.getElementById('detailAddress').textContent = goods.address || '云南省昆明市乡村县';
-            document.getElementById('detailShelfLife').textContent = goods.shelf_life || '三天';
-            document.getElementById('detailPackage').textContent = goods.package_method || '袋装';
-            document.getElementById('detailPesticide').textContent = goods.pesticide_used || '否';
-            document.getElementById('detailStorage').textContent = goods.storage_method || '常温';
-            document.getElementById('detailPickup').textContent = goods.support_pickup || '是';
-            
-            // 填充描述
-            document.getElementById('detailDescContent').textContent = goods.description || '优质娃娃菜，现摘现邮。买后一天内发货。涮火锅炒菜都好吃！';
-            
-            // 填充联系信息
-            document.getElementById('contactName').textContent = goods.seller_name || '我是昵称';
-            document.getElementById('contactAddress').textContent = goods.seller_address || '云南省昆明市';
-            document.getElementById('contactPhone').textContent = `电话：${goods.seller_phone || '122334455667'}`;
+            // 填充数据
+            document.getElementById('detailPriceNum').textContent = `¥${goods.price.toFixed(2)}`;
+            document.getElementById('detailPriceUnit').textContent = '/份';
+            document.getElementById('detailSales').textContent = `已售${goods.sales}`;
+            document.getElementById('detailProductName').textContent = goods.name;
+            document.getElementById('detailCategory').textContent = goods.category;
+            document.getElementById('detailSpec').textContent = goods.spec;
+            document.getElementById('detailAddress').textContent = goods.address;
+            document.getElementById('detailShelfLife').textContent = goods.shelf_life;
+            document.getElementById('detailPackage').textContent = goods.package_method;
+            document.getElementById('detailPesticide').textContent = goods.pesticide_used;
+            document.getElementById('detailStorage').textContent = goods.storage_method;
+            document.getElementById('detailPickup').textContent = goods.support_pickup;
+            document.getElementById('detailDescContent').textContent = goods.description;
+            document.getElementById('contactName').textContent = goods.seller_name;
+            document.getElementById('contactAddress').textContent = goods.seller_address;
+            document.getElementById('contactPhone').textContent = `电话：${goods.seller_phone}`;
             
             // 显示详情页
             pages.forEach(page => page.classList.remove('active'));
             document.getElementById('detailPage').classList.add('active');
             document.querySelector('.tab-bar').style.display = 'none';
             
-            // 重置查看全部状态
+            // 重置展开状态
             infoExpand.classList.remove('show-all');
             viewAllBtn.textContent = '查看全部';
         }
 
-        // ========== 商品列表页逻辑（核心修改：自动定位从后端接口获取） ==========
+        // ========== 商品列表页逻辑 ==========
         // Tab切换
         tabItems.forEach(item => {
             item.addEventListener('click', () => {
                 tabItems.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
-                const targetPageId = item.getAttribute('data-page');
+                
+                const targetPageId = item.dataset.page;
                 pages.forEach(page => {
                     page.classList.remove('active');
                     if (page.id === targetPageId) {
@@ -1580,42 +1541,58 @@
             });
         });
 
-        // 地址选择弹窗 - 核心修改3：点击后请求后端top接口获取定位数据
-        const cityBtn = document.getElementById('cityBtn');
-        const cityModal = document.getElementById('cityModal');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const confirmBtn = document.getElementById('confirmBtn');
-        const autoLocationText = document.getElementById('autoLocationText'); // 新增：获取动态定位文本元素
-        const manualAddressInput = document.getElementById('manualAddressInput'); // 新增：获取手动输入框元素
-        
-        cityBtn.addEventListener('click', async () => {
+        // 城市选择弹窗
+        cityBtn.addEventListener('click', () => {
             cityModal.style.display = 'flex';
-            autoLocationText.textContent = '正在定位...'; // 显示加载状态
+            autoLocationText.textContent = '正在定位...';
             
-            try {
-                // 调用后端top接口（暂时用此接口名）获取定位数据
-                // 实际接口返回格式建议：{ code: 200, data: { address: '湖南省湘潭市岳塘区' } }
-                const response = await axios.get(`${BASE_API_URL}/top`);
-                const locationData = response.data.data;
-                
-                // 更新自动定位文本
-                autoLocationText.textContent = locationData.address || '定位失败，请手动输入';
-            } catch (error) {
-                console.error('获取定位数据失败：', error);
-                autoLocationText.textContent = '定位失败，请手动输入';
-                showToast('定位失败，请手动输入地址');
-            }
+            // 模拟定位
+            setTimeout(() => {
+                autoLocationText.textContent = '湖南省湘潭市岳塘区';
+            }, 1000);
         });
 
+        // 城市弹窗取消
         cancelBtn.addEventListener('click', () => {
             cityModal.style.display = 'none';
-            manualAddressInput.value = ''; // 清空手动输入框
         });
 
-        // 核心修改4：确认按钮逻辑 - 优先手动输入，其次自动定位
+        // 城市弹窗确认
         confirmBtn.addEventListener('click', () => {
-            const manualVal = manualAddressInput.value.trim();
-            const autoVal = autoLocationText.textContent;
-            
-            let selectedAddress = '';
-            //
+            const address = manualAddressInput.value.trim() || autoLocationText.textContent;
+            currentCity = address;
+            cityBtn.textContent = address;
+            cityModal.style.display = 'none';
+            renderGoodsList(); // 重新加载列表
+        });
+
+        // 分类筛选
+        categoryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                categoryItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                currentCategory = item.dataset.category;
+                renderGoodsList(searchInput.value); // 带关键词重新加载
+            });
+        });
+
+        // 搜索功能
+        searchBtn.addEventListener('click', () => {
+            renderGoodsList(searchInput.value);
+        });
+
+        searchInput.addEventListener('keyup', debounce((e) => {
+            if (e.key === 'Enter') {
+                renderGoodsList(searchInput.value);
+            }
+        }));
+
+        // ========== 页面初始化 ==========
+        // DOM加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化商品列表
+            renderGoodsList();
+        });
+    </script>
+</body>
+</html>
