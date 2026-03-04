@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>农产品展示与发布平台</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            font-size: 14px;
+            color: #333;
+        }
+        .page {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+        }
+        .page.active {
+            display: block;
+        }
+        /* 通用弹窗样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal .content {
+            width: 85%;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .modal .content .title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .modal .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .modal .btn-group button {
+            width: 48%;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .modal .cancel {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+        .modal .confirm {
+            background-color: #0088ff;
+            color: #fff;
+        }
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            background-color: rgba(0,0,0,0.7);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+        }
+
+        /* ========== 农产品列表页样式（保留） ========== */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            gap: 8px;
+        }
+        .search-icon-wrap {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        .search-icon-wrap:hover {
+            background-color: #f5f5f5;
+        }
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        .search-input {
+            flex: 1;
+            height: 36px;
+            line-height: 36px;
+            padding: 0 12px;
+            border: 1px solid #eee;
+            border-radius: 18px;
+            background-color: #f8f8f8;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            border-color: #0088ff;
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.1);
+        }
+        .search-input::placeholder {
+            color: #999;
+        }
+        .city {
+            margin-left: 5px;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .city:hover {
+            background-color: #f5f5f5;
+        }
+        .category {
+            display: flex;
+            padding: 10px 15px;
+            background-color: #fff;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 1px solid #eee;
+        }
+        .category .item {
+            padding: 5px 10px;
+            margin-right: 10px;
+            color: #666;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .category .item.active {
+            background-color: #0088ff;
+            color: #fff;
+        }
+        .city-modal .content {
+            width: 80%;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .city-modal .content .title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .city-modal .content .location {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            color: #666;
+        }
+        .city-modal .content .manual-input {
+            margin-bottom: 15px;
+        }
+        .city-modal .content .manual-input input {
+            width: 100%;
+            height: 35px;
+            padding: 0 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .goods-list {
+            padding: 10px 15px;
+        }
+        .goods-item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        .goods-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .goods-item .name {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        .goods-item .spec {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .goods-item .price {
+            color: #ff4400;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .goods-item .origin {
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .goods-item .contact {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .search-tips {
+            position: absolute;
+            top: 56px;
+            left: 15px;
+            right: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 98;
+            padding: 10px 0;
+            display: none;
+        }
+        .search-tips .tip-item {
+            padding: 8px 15px;
+            color: #333;
+            cursor: pointer;
+        }
+        .search-tips .tip-item:hover {
+            background-color: #f8f8f8;
+        }
+
+        /* ========== 发布页面样式（保留） ========== */
+        .publish-page {
+            background-color: #f9f9f9;
+        }
+        .publish-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+        .publish-back {
+            font-size: 18px;
+            color: #333;
+            cursor: pointer;
+        }
+        .publish-type-select {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            color: #333;
+        }
+        .publish-type-select select {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 15px;
+            color: #333;
+            padding-right: 15px;
+            appearance: none;
+            background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath fill='%23666' d='M0 0l6 6 6-6z'/%3E%3C/svg%3E") no-repeat right center;
+        }
+        .publish-submit-btn {
+            font-size: 15px;
+            color: #0088ff;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .publish-form-wrap {
+            padding: 10px 15px;
+        }
+        .publish-img-upload {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .publish-img-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            border: 1px dashed #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .publish-img-item.add {
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+        .publish-img-item.has-img {
+            border: none;
+        }
+        .publish-img-item.has-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .publish-img-item .delete-img {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255,0,0,0.8);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            display: none;
+        }
+        .publish-img-item.has-img:hover .delete-img {
+            display: flex;
+        }
+        #publishFileInput {
+            display: none;
+        }
+        .publish-form-row {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+        }
+        .form-row-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .form-row-item:last-child {
+            border-bottom: none;
+        }
+        .form-label {
+            font-size: 14px;
+            color: #333;
+        }
+        .form-value {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+        }
+        .form-value input {
+            border: none;
+            outline: none;
+            text-align: right;
+            font-size: 14px;
+            color: #333;
+            background: transparent;
+            padding: 2px 0;
+            width: 100%;
+        }
+        .form-value input::placeholder {
+            color: #ccc;
+        }
+        .form-value .arrow {
+            font-size: 12px;
+            color: #ccc;
+            margin-left: 5px;
+        }
+        .form-value .price-text {
+            color: #ff4400;
+            font-weight: bold;
+        }
+        .count-limit {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+        .form-textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 14px;
+            color: #333;
+            background: transparent;
+            min-height: 60px;
+            padding: 5px 0;
+        }
+        .price-type-modal .content {
+            padding: 15px;
+        }
+        .price-type-title {
+            font-size: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .price-type-list {
+            margin-bottom: 20px;
+        }
+        .price-type-item {
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .price-type-item.active {
+            background-color: #f0f8ff;
+            color: #0088ff;
+            border: 1px solid #0088ff;
+        }
+        .price-type-item.normal {
+            background-color: #f5f5f5;
+            color: #666;
+            border: 1px solid #eee;
+        }
+        .price-select-modal .content {
+            padding: 15px;
+        }
+        .price-select-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .price-unit {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .address-select-modal .content {
+            padding: 15px;
+        }
+        .address-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .address-tips {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .location-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        /* ========== 重构：商品详情页样式（匹配参考图片） ========== */
+        .detail-page {
+            background-color: #fff;
+            padding-bottom: 60px;
+        }
+        /* 详情页顶部返回栏 */
+        .detail-header-bar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 15px;
+            background-color: rgba(255,255,255,0.9);
+            z-index: 90;
+        }
+        .detail-back-btn {
+            font-size: 18px;
+            color: #333;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        /* 商品图片轮播区 */
+        .detail-img-swiper {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+        }
+        .swiper-wrapper {
+            display: flex;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        .swiper-item {
+            flex: 0 0 100%;
+            height: 100%;
+        }
+        .swiper-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+        }
+        .indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.6);
+        }
+        .indicator-dot.active {
+            background-color: #fff;
+        }
+
+        /* 价格区域 */
+        .detail-price-area {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .detail-price-wrap {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        .detail-price-num {
+            font-size: 22px;
+            color: #ff4400;
+            font-weight: bold;
+        }
+        .detail-price-unit {
+            font-size: 14px;
+            color: #666;
+        }
+        .detail-sales {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .detail-product-name {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* 产品信息区域 */
+        .detail-info-area {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .info-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .info-list {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.8;
+        }
+        .info-item {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .info-label {
+            width: 80px;
+            color: #666;
+            flex-shrink: 0;
+        }
+        .info-value {
+            flex: 1;
+        }
+        .view-all-btn {
+            margin-top: 10px;
+            text-align: right;
+            color: #0088ff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .info-expand {
+            max-height: 100px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .info-expand.show-all {
+            max-height: 500px;
+        }
+
+        /* 商品描述区域 */
+        .detail-desc-area {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .desc-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        /* 联系我们区域 */
+        .detail-contact-area {
+            padding: 15px;
+        }
+        .contact-card {
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .contact-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #0088ff;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+        }
+        .contact-name {
+            font-size: 14px;
+            color: #333;
+            margin-right: 10px;
+        }
+        .contact-address {
+            font-size: 12px;
+            color: #999;
+        }
+        .contact-phone {
+            font-size: 14px;
+            color: #333;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px dashed #eee;
+        }
+        .contact-btn {
+            width: 100%;
+            height: 40px;
+            background-color: #00cc66;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* ========== 我的页面样式（保留） ========== */
+        .mine-header {
+            padding: 10px 15px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* ========== 底部Tab栏样式（保留） ========== */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            padding: 5px 0;
+        }
+        .tab-bar .tab-item {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+        .tab-bar .tab-item .icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+            display: block;
+        }
+        .tab-bar .tab-item .text {
+            font-size: 12px;
+            color: #666;
+        }
+        .tab-bar .tab-item.active .text {
+            color: #0088ff;
+        }
+        .container {
+            padding-bottom: 60px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 1. 农产品展示页面 -->
+    <div class="page active" id="goodsPage">
+        <div class="container">
+            <!-- 顶部搜索栏 -->
+            <div class="header">
+                <div class="search-icon-wrap" id="searchBtn">
+                    <svg class="search-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0 0 11.6 0l43.6-43.5a8.2 8.2 0 0 0 0-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C205.3 528 182 471.8 182 412s23.3-116.1 65.6-158.4C296 205.3 352.2 182 412 182s116.1 23.3 158.4 65.6S636 352.2 636 412s-23.2 116.1-65.6 158.4z" fill="#666"/>
+                    </svg>
+                </div>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索农产品">
+                <div class="city" id="cityBtn">湘潭市</div>
+                <div class="search-tips" id="searchTips"></div>
+            </div>
+
+            <!-- 分类筛选栏 -->
+            <div class="category">
+                <div class="item active">蔬菜</div>
+                <div class="item">水果</div>
+                <div class="item">肉食</div>
+                <div class="item">乳饮</div>
+                <div class="item">零食</div>
+                <div class="item">全部</div>
+            </div>
+
+            <!-- 地址选择弹窗 -->
+            <div class="modal city-modal" id="cityModal">
+                <div class="content">
+                    <div class="title">选择城市</div>
+                    <div class="location">自动定位：湖南省湘潭市</div>
+                    <div class="manual-input">
+                        <input type="text" placeholder="手动输入地址">
+                    </div>
+                    <div class="btn-group">
+                        <button class="cancel" id="cancelBtn">取消</button>
+                        <button class="confirm" id="confirmBtn">确定</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品列表 -->
+            <div class="goods-list" id="goodsList">
+                <div style="text-align:center; padding:20px; color:#999;" id="loadingTip">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 农产品发布页面 -->
+    <div class="page publish-page" id="publishPage">
+        <!-- 顶部栏 -->
+        <div class="publish-top-bar">
+            <div class="publish-back" id="publishBackBtn">←</div>
+            <div class="publish-type-select">
+                <select id="productTypeSelect">
+                    <option value="蔬菜">蔬菜</option>
+                    <option value="水果">水果</option>
+                    <option value="肉食">肉食</option>
+                    <option value="乳饮">乳饮</option>
+                    <option value="零食">零食</option>
+                </select>
+            </div>
+            <div class="publish-submit-btn" id="publishSubmitBtn">发布</div>
+        </div>
+
+        <!-- 表单主体 -->
+        <div class="publish-form-wrap">
+            <!-- 图片上传 -->
+            <div class="publish-img-upload">
+                <div class="publish-img-item has-img" id="previewImgItem" style="display: none;">
+                    <img src="" id="previewImg" alt="农产品图片">
+                    <div class="delete-img" id="deleteImgBtn">×</div>
+                </div>
+                <div class="publish-img-item add" id="addImgBtn">+</div>
+                <input type="file" id="publishFileInput" accept="image/*">
+            </div>
+
+            <!-- 价格与计价方式 -->
+            <div class="publish-form-row">
+                <div class="form-row-item" id="priceRow">
+                    <div class="form-label">价格</div>
+                    <div class="form-value">
+                        <span class="price-text" id="showPrice">¥0.00</span>
+                        <span class="arrow">></span>
+                    </div>
+                </div>
+                <div class="form-row-item" id="priceTypeRow">
+                    <div class="form-label">计价方式</div>
+                    <div class="form-value">
+                        <span id="showPriceType">以件计价</span>
+                        <span class="arrow">></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发货地址 -->
+            <div class="publish-form-row">
+                <div class="form-row-item" id="addressRow">
+                    <div class="form-label">发货地址</div>
+                    <div class="form-value">
+                        <span id="showAddress">一键定位</span>
+                        <span class="arrow">></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 联系方式 -->
+            <div class="publish-form-row">
+                <div class="form-row-item">
+                    <div class="form-label">联系方式</div>
+                    <div class="form-value">
+                        <input type="tel" id="contactInput" placeholder="请输入手机号码/微信">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 农产品名称 -->
+            <div class="publish-form-row">
+                <div class="form-row-item">
+                    <div class="form-label">这是什么农产品？</div>
+                    <div class="form-value" style="width: 100%;">
+                        <input type="text" id="productNameInput" placeholder="请输入农产品名称" maxlength="25">
+                        <div class="count-limit" id="nameCount">0/25</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细描述 -->
+            <div class="publish-form-row">
+                <div class="form-row-item">
+                    <div class="form-label">详细描述一下吧？</div>
+                    <div class="form-value" style="width: 100%;">
+                        <textarea class="form-textarea" id="productDescInput" placeholder="请输入农产品详细描述" maxlength="100"></textarea>
+                        <div class="count-limit" id="descCount">0/100</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 品类规格等信息 -->
+            <div class="publish-form-row">
+                <div class="form-row-item">
+                    <div class="form-label">品类</div>
+                    <div class="form-value">
+                        <input type="text" id="productCategoryInput" placeholder="例如：黄心白菜">
+                    </div>
+                </div>
+                <div class="form-row-item">
+                    <div class="form-label">规格</div>
+                    <div class="form-value">
+                        <input type="text" id="productSpecInput" placeholder="例如：500g-550g/份">
+                    </div>
+                </div>
+                <div class="form-row-item">
+                    <div class="form-label">保质期</div>
+                    <div class="form-value">
+                        <input type="text" id="productShelfLifeInput" placeholder="例如：三天">
+                    </div>
+                </div>
+                <div class="form-row-item">
+                    <div class="form-label">包装方式</div>
+                    <div class="form-value">
+                        <input type="text" id="productPackageInput" placeholder="例如：袋装">
+                    </div>
+                </div>
+                <div class="form-row-item">
+                    <div class="form-label">是否使用农药</div>
+                    <div class="form-value">
+                        <input type="text" id="productPesticideInput" placeholder="例如：否">
+                    </div>
+                </div>
+                <div class="form-row-item">
+                    <div class="form-label">保存方式</div>
+                    <div class="form-value">
+                        <input type="text" id="productStorageInput" placeholder="例如：常温">
+                    </div>
+                </div>
+                <div class="form-row-item">
+                    <div class="form-label">是否支持自提</div>
+                    <div class="form-value">
+                        <input type="text" id="productPickupInput" placeholder="例如：是">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 计价方式弹窗 -->
+    <div class="modal price-type-modal" id="priceTypeModal">
+        <div class="content">
+            <div class="price-type-title">选择计价方式</div>
+            <div class="price-type-list">
+                <div class="price-type-item active" data-type="以件计价">以件计价</div>
+                <div class="price-type-item normal" data-type="以斤计价">以斤计价</div>
+            </div>
+            <div class="btn-group">
+                <button class="cancel" id="priceTypeCancelBtn">取消</button>
+                <button class="confirm" id="priceTypeConfirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 价格选择弹窗 -->
+    <div class="modal price-select-modal" id="priceSelectModal">
+        <div class="content">
+            <div class="title">选择价格</div>
+            <input type="number" class="price-select-input" id="priceInput" placeholder="0.00" step="0.01" min="0">
+            <div class="price-unit" id="priceUnitText">元/件</div>
+            <div class="btn-group">
+                <button class="cancel" id="priceCancelBtn">取消</button>
+                <button class="confirm" id="priceConfirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 地址选择弹窗 -->
+    <div class="modal address-select-modal" id="addressSelectModal">
+        <div class="content">
+            <div class="title">选择您的地址</div>
+            <div class="location-btn" id="locationBtn">一键定位</div>
+            <input type="text" class="address-input" id="addressInput" placeholder="门牌号 例：6栋201室">
+            <div class="address-tips">试试粘贴寄件人寄件地址，可快速识别您的寄件信息</div>
+            <div class="btn-group">
+                <button class="cancel" id="addressCancelBtn">取消</button>
+                <button class="confirm" id="addressConfirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 商品详情页面（重构） -->
+    <div class="page detail-page" id="detailPage">
+        <!-- 返回栏 -->
+        <div class="detail-header-bar">
+            <span class="detail-back-btn" id="detailBackBtn">←</span>
+        </div>
+
+        <!-- 图片轮播 -->
+        <div class="detail-img-swiper" id="detailImgSwiper">
+            <div class="swiper-wrapper" id="swiperWrapper">
+                <!-- 动态填充图片 -->
+            </div>
+            <div class="swiper-indicator" id="swiperIndicator">
+                <!-- 动态填充指示器 -->
+            </div>
+        </div>
+
+        <!-- 价格区域 -->
+        <div class="detail-price-area">
+            <div class="detail-price-wrap">
+                <span class="detail-price-num" id="detailPriceNum">¥3.89</span>
+                <span class="detail-price-unit" id="detailPriceUnit">/份</span>
+            </div>
+            <div class="detail-sales" id="detailSales">已售300</div>
+            <div class="detail-product-name" id="detailProductName">500g-550g/份 云南小娃娃菜</div>
+        </div>
+
+        <!-- 产品信息 -->
+        <div class="detail-info-area">
+            <div class="info-title">产品信息</div>
+            <div class="info-list info-expand" id="infoExpand">
+                <div class="info-item">
+                    <span class="info-label">品类：</span>
+                    <span class="info-value" id="detailCategory">黄心白菜</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">规格：</span>
+                    <span class="info-value" id="detailSpec">500g-550g/份</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">发货地：</span>
+                    <span class="info-value" id="detailAddress">云南省昆明市乡村县</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">保质期：</span>
+                    <span class="info-value" id="detailShelfLife">三天</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">包装方式：</span>
+                    <span class="info-value" id="detailPackage">袋装</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">是否使用农药：</span>
+                    <span class="info-value" id="detailPesticide">否</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">保存方式：</span>
+                    <span class="info-value" id="detailStorage">常温</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">是否支持自提：</span>
+                    <span class="info-value" id="detailPickup">是</span>
+                </div>
+            </div>
+            <div class="view-all-btn" id="viewAllBtn">查看全部</div>
+        </div>
+
+        <!-- 商品描述 -->
+        <div class="detail-desc-area">
+            <div class="info-title">商品描述</div>
+            <div class="desc-content" id="detailDescContent">
+                优质娃娃菜，现摘现邮。买后一天内发货。涮火锅炒菜都好吃！
+            </div>
+        </div>
+
+        <!-- 联系我们 -->
+        <div class="detail-contact-area">
+            <div class="contact-card">
+                <div class="contact-header">
+                    <div class="avatar">我</div>
+                    <div class="contact-name" id="contactName">我是昵称</div>
+                    <div class="contact-address" id="contactAddress">云南省昆明市</div>
+                </div>
+                <div class="contact-phone" id="contactPhone">电话：122334455667</div>
+            </div>
+            <button class="contact-btn" id="contactBtn">联系我们</button>
+        </div>
+    </div>
+
+    <!-- 4. 我的页面 -->
+    <div class="page" id="minePage">
+        <div class="container">
+            <div class="mine-header">我的</div>
+            <div style="padding: 20px; text-align: center; color: #666; margin-top: 50px;">
+                我的页面内容待完善
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部Tab栏 -->
+    <div class="tab-bar">
+        <div class="tab-item active" data-page="goodsPage">
+            <span class="icon">🥬</span>
+            <span class="text">农产品</span>
+        </div>
+        <div class="tab-item" data-page="publishPage">
+            <span class="icon">📤</span>
+            <span class="text">发布</span>
+        </div>
+        <div class="tab-item" data-page="minePage">
+            <span class="icon">👤</span>
+            <span class="text">我的</span>
+        </div>
+    </div>
+
+    <!-- 提示弹窗 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 引入axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // ========== 核心配置 ==========
+        const BASE_API_URL = 'http://localhost:8080/api';
+        const CURRENT_USER_ID = 1;
+
+        // ========== 全局变量 ==========
+        let uploadedImage = null; // 上传的图片文件
+        let currentPriceType = '以件计价'; // 当前计价方式
+        let currentPrice = 0; // 当前价格
+        let currentAddress = '一键定位'; // 当前地址
+        let currentSwiperIndex = 0; // 轮播图当前索引
+
+        // ========== DOM元素 ==========
+        // 通用元素
+        const toast = document.getElementById('toast');
+        const tabItems = document.querySelectorAll('.tab-bar .tab-item');
+        const pages = document.querySelectorAll('.page');
+        
+        // 发布页元素
+        const publishBackBtn = document.getElementById('publishBackBtn');
+        const addImgBtn = document.getElementById('addImgBtn');
+        const publishFileInput = document.getElementById('publishFileInput');
+        const previewImgItem = document.getElementById('previewImgItem');
+        const previewImg = document.getElementById('previewImg');
+        const deleteImgBtn = document.getElementById('deleteImgBtn');
+        const priceRow = document.getElementById('priceRow');
+        const priceTypeRow = document.getElementById('priceTypeRow');
+        const addressRow = document.getElementById('addressRow');
+        const productNameInput = document.getElementById('productNameInput');
+        const nameCount = document.getElementById('nameCount');
+        const productDescInput = document.getElementById('productDescInput');
+        const descCount = document.getElementById('descCount');
+        const publishSubmitBtn = document.getElementById('publishSubmitBtn');
+        
+        // 计价方式弹窗元素
+        const priceTypeModal = document.getElementById('priceTypeModal');
+        const priceTypeItems = document.querySelectorAll('.price-type-item');
+        const priceTypeCancelBtn = document.getElementById('priceTypeCancelBtn');
+        const priceTypeConfirmBtn = document.getElementById('priceTypeConfirmBtn');
+        
+        // 价格选择弹窗元素
+        const priceSelectModal = document.getElementById('priceSelectModal');
+        const priceInput = document.getElementById('priceInput');
+        const priceUnitText = document.getElementById('priceUnitText');
+        const priceCancelBtn = document.getElementById('priceCancelBtn');
+        const priceConfirmBtn = document.getElementById('priceConfirmBtn');
+        const showPrice = document.getElementById('showPrice');
+        const showPriceType = document.getElementById('showPriceType');
+        
+        // 地址弹窗元素
+        const addressSelectModal = document.getElementById('addressSelectModal');
+        const locationBtn = document.getElementById('locationBtn');
+        const addressInput = document.getElementById('addressInput');
+        const addressCancelBtn = document.getElementById('addressCancelBtn');
+        const addressConfirmBtn = document.getElementById('addressConfirmBtn');
+        const showAddress = document.getElementById('showAddress');
+
+        // 详情页元素
+        const detailBackBtn = document.getElementById('detailBackBtn');
+        const swiperWrapper = document.getElementById('swiperWrapper');
+        const swiperIndicator = document.getElementById('swiperIndicator');
+        const infoExpand = document.getElementById('infoExpand');
+        const viewAllBtn = document.getElementById('viewAllBtn');
+        const contactBtn = document.getElementById('contactBtn');
+
+        // ========== Axios拦截器（保留） ==========
+        axios.interceptors.request.use(config => {
+            const userInfo = localStorage.getItem('userInfo');
+            if (userInfo) {
+                const token = JSON.parse(userInfo).token;
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+            }
+            return config;
+        }, error => {
+            return Promise.reject(error);
+        });
+
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response?.status === 401) {
+                    showToast('登录已过期，请重新登录');
+                    localStorage.removeItem('userInfo');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        // ========== 工具函数 ==========
+        function showToast(message, duration = 2000) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, duration);
+        }
+
+        function debounce(fn, delay = 300) {
+            let timer = null;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    fn.apply(this, args);
+                }, delay);
+            };
+        }
+
+        // ========== 发布页逻辑（保留） ==========
+        // 图片上传
+        addImgBtn.addEventListener('click', () => {
+            publishFileInput.click();
+        });
+
+        publishFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            uploadedImage = file;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                previewImg.src = event.target.result;
+                previewImgItem.style.display = 'block';
+                addImgBtn.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 删除图片
+        deleteImgBtn.addEventListener('click', () => {
+            uploadedImage = null;
+            previewImgItem.style.display = 'none';
+            addImgBtn.style.display = 'flex';
+            publishFileInput.value = '';
+        });
+
+        // 字数限制
+        productNameInput.addEventListener('input', () => {
+            const len = productNameInput.value.length;
+            nameCount.textContent = `${len}/25`;
+        });
+
+        productDescInput.addEventListener('input', () => {
+            const len = productDescInput.value.length;
+            descCount.textContent = `${len}/100`;
+        });
+
+        // 计价方式弹窗
+        priceTypeRow.addEventListener('click', () => {
+            priceTypeModal.style.display = 'flex';
+            // 重置选中状态
+            priceTypeItems.forEach(item => {
+                if (item.dataset.type === currentPriceType) {
+                    item.className = 'price-type-item active';
+                } else {
+                    item.className = 'price-type-item normal';
+                }
+            });
+        });
+
+        priceTypeItems.forEach(item => {
+            item.addEventListener('click', () => {
+                priceTypeItems.forEach(i => i.className = 'price-type-item normal');
+                item.className = 'price-type-item active';
+            });
+        });
+
+        priceTypeCancelBtn.addEventListener('click', () => {
+            priceTypeModal.style.display = 'none';
+        });
+
+        priceTypeConfirmBtn.addEventListener('click', () => {
+            const activeItem = document.querySelector('.price-type-item.active');
+            currentPriceType = activeItem.dataset.type;
+            showPriceType.textContent = currentPriceType;
+            // 更新价格单位
+            priceUnitText.textContent = currentPriceType === '以件计价' ? '元/件' : '元/斤';
+            priceTypeModal.style.display = 'none';
+        });
+
+        // 价格选择弹窗
+        priceRow.addEventListener('click', () => {
+            priceSelectModal.style.display = 'flex';
+            priceInput.value = currentPrice || '';
+            priceUnitText.textContent = currentPriceType === '以件计价' ? '元/件' : '元/斤';
+        });
+
+        priceCancelBtn.addEventListener('click', () => {
+            priceSelectModal.style.display = 'none';
+        });
+
+        priceConfirmBtn.addEventListener('click', () => {
+            const price = parseFloat(priceInput.value);
+            if (isNaN(price) || price < 0) {
+                showToast('请输入有效的价格');
+                return;
+            }
+            currentPrice = price;
+            showPrice.textContent = `¥${price.toFixed(2)}`;
+            priceSelectModal.style.display = 'none';
+        });
+
+        // 地址选择弹窗
+        addressRow.addEventListener('click', () => {
+            addressSelectModal.style.display = 'flex';
+            addressInput.value = currentAddress === '一键定位' ? '' : currentAddress;
+        });
+
+        locationBtn.addEventListener('click', () => {
+            showToast('正在定位...');
+            // 模拟定位
+            setTimeout(() => {
+                currentAddress = '湖南省湘潭市岳塘区XX小区6栋201室';
+                addressInput.value = currentAddress;
+                showToast('定位成功');
+            }, 1500);
+        });
+
+        addressCancelBtn.addEventListener('click', () => {
+            addressSelectModal.style.display = 'none';
+        });
+
+        addressConfirmBtn.addEventListener('click', () => {
+            const address = addressInput.value.trim();
+            if (!address) {
+                showToast('请输入地址');
+                return;
+            }
+            currentAddress = address;
+            showAddress.textContent = address;
+            addressSelectModal.style.display = 'none';
+        });
+
+        // 发布返回
+        publishBackBtn.addEventListener('click', () => {
+            tabItems.forEach(item => {
+                if (item.dataset.page === 'goodsPage') {
+                    item.click();
+                }
+            });
+        });
+
+        // 提交发布
+        publishSubmitBtn.addEventListener('click', async () => {
+            // 表单验证
+            if (!uploadedImage) {
+                showToast('请上传农产品主图');
+                return;
+            }
+            if (!productNameInput.value.trim()) {
+                showToast('请输入农产品名称');
+                return;
+            }
+            if (currentPrice <= 0) {
+                showToast('请设置有效价格');
+                return;
+            }
+            if (!currentAddress || currentAddress === '一键定位') {
+                showToast('请选择发货地址');
+                return;
+            }
+
+            // 组装表单数据
+            const formData = new FormData();
+            formData.append('name', productNameInput.value.trim());
+            formData.append('variety', document.getElementById('productTypeSelect').value);
+            formData.append('price', currentPrice.toFixed(2));
+            formData.append('price_type', currentPriceType);
+            formData.append('address', currentAddress);
+            formData.append('contact', document.getElementById('contactInput').value.trim() || '');
+            formData.append('spec', document.getElementById('productSpecInput').value.trim() || '');
+            formData.append('shelf_life', document.getElementById('productShelfLifeInput').value.trim() || '');
+            formData.append('category', document.getElementById('productCategoryInput').value.trim() || '');
+            formData.append('package_method', document.getElementById('productPackageInput').value.trim() || '');
+            formData.append('pesticide_used', document.getElementById('productPesticideInput').value.trim() || '');
+            formData.append('storage_method', document.getElementById('productStorageInput').value.trim() || '');
+            formData.append('support_pickup', document.getElementById('productPickupInput').value.trim() || '');
+            formData.append('description', productDescInput.value.trim() || '');
+            formData.append('user_id', CURRENT_USER_ID);
+            formData.append('main_image', uploadedImage);
+
+            // 提交发布
+            try {
+                const response = await axios.post(`${BASE_API_URL}/products`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                if (response.data.code === 200) {
+                    showToast('发布成功！');
+                    // 重置表单
+                    resetPublishForm();
+                    // ========== 关键修改：跳转到指定的login.html本地路径 ==========
+                    setTimeout(() => {
+                        // 本地文件路径需转换为file协议格式，反斜杠改为正斜杠，添加协议头
+                        const loginPath = 'file:///C:/Users/欧阳周翔/Desktop/农产品/login.html';
+                        window.location.href = loginPath;
+                    }, 1500);
+                } else {
+                    showToast(response.data.message || '发布失败');
+                }
+            } catch (error) {
+                console.error('发布失败：', error);
+                showToast(error.response?.data?.message || '发布失败，请重试');
+            }
+        });
+
+        // 重置发布表单
+        function resetPublishForm() {
+            uploadedImage = null;
+            previewImgItem.style.display = 'none';
+            addImgBtn.style.display = 'flex';
+            publishFileInput.value = '';
+            
+            productNameInput.value = '';
+            nameCount.textContent = '0/25';
+            productDescInput.value = '';
+            descCount.textContent = '0/100';
+            document.getElementById('contactInput').value = '';
+            document.getElementById('productSpecInput').value = '';
+            document.getElementById('productShelfLifeInput').value = '';
+            document.getElementById('productCategoryInput').value = '';
+            document.getElementById('productPackageInput').value = '';
+            document.getElementById('productPesticideInput').value = '';
+            document.getElementById('productStorageInput').value = '';
+            document.getElementById('productPickupInput').value = '';
+            
+            currentPrice = 0;
+            showPrice.textContent = '¥0.00';
+            currentPriceType = '以件计价';
+            showPriceType.textContent = '以件计价';
+            currentAddress = '一键定位';
+            showAddress.textContent = '一键定位';
+        }
+
+        // ========== 重构：商品详情页逻辑 ==========
+        // 初始化轮播图
+        function initSwiper(images) {
+            if (!images || images.length === 0) {
+                images = [
+                    'https://picsum.photos/600/400?random=1',
+                    'https://picsum.photos/600/400?random=2',
+                    'https://picsum.photos/600/400?random=3'
+                ];
+            }
+            
+            // 清空原有内容
+            swiperWrapper.innerHTML = '';
+            swiperIndicator.innerHTML = '';
+            currentSwiperIndex = 0;
+            
+            // 创建轮播项和指示器
+            images.forEach((imgUrl, index) => {
+                // 轮播项
+                const swiperItem = document.createElement('div');
+                swiperItem.className = 'swiper-item';
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = `农产品图片${index+1}`;
+                swiperItem.appendChild(img);
+                swiperWrapper.appendChild(swiperItem);
+                
+                // 指示器
+                const indicatorDot = document.createElement('div');
+                indicatorDot.className = `indicator-dot ${index === 0 ? 'active' : ''}`;
+                indicatorDot.dataset.index = index;
+                indicatorDot.addEventListener('click', () => {
+                    switchSwiper(index);
+                });
+                swiperIndicator.appendChild(indicatorDot);
+            });
+            
+            // 添加滑动事件
+            let startX = 0;
+            const swiper = document.getElementById('detailImgSwiper');
+            
+            swiper.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+            
+            swiper.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const diffX = endX - startX;
+                
+                if (diffX > 50 && currentSwiperIndex > 0) {
+                    // 左滑
+                    switchSwiper(currentSwiperIndex - 1);
+                } else if (diffX < -50 && currentSwiperIndex < images.length - 1) {
+                    // 右滑
+                    switchSwiper(currentSwiperIndex + 1);
+                }
+            });
+        }
+
+        // 切换轮播图
+        function switchSwiper(index) {
+            const total = swiperWrapper.children.length;
+            if (index < 0 || index >= total) return;
+            
+            currentSwiperIndex = index;
+            // 移动轮播容器
+            swiperWrapper.style.transform = `translateX(-${index * 100}%)`;
+            
+            // 更新指示器
+            const dots = document.querySelectorAll('.indicator-dot');
+            dots.forEach((dot, i) => {
+                dot.className = `indicator-dot ${i === index ? 'active' : ''}`;
+            });
+        }
+
+        // 查看全部/收起
+        viewAllBtn.addEventListener('click', () => {
+            infoExpand.classList.toggle('show-all');
+            viewAllBtn.textContent = infoExpand.classList.contains('show-all') ? '收起' : '查看全部';
+        });
+
+        // 联系我们按钮
+        contactBtn.addEventListener('click', () => {
+            showToast('正在联系卖家...');
+            // 模拟联系
+            setTimeout(() => {
+                showToast('已获取卖家联系方式：122334455667');
+            }, 1500);
+        });
+
+        // 详情页返回
+        detailBackBtn.addEventListener('click', () => {
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById('goodsPage').classList.add('active');
+            document.querySelector('.tab-bar').style.display = 'flex';
+        });
+
+        // 显示商品详情（重构）
+        function showGoodsDetail(goods) {
+            // 初始化轮播图
+            const images = goods.images || [
+                goods.main_image || 'https://picsum.photos/600/400?random=1',
+                'https://picsum.photos/600/400?random=2', // 菜地图片
+                'https://picsum.photos/600/400?random=3'
+            ];
+            initSwiper(images);
+            
+            // 填充价格信息
+            document.getElementById('detailPriceNum').textContent = `¥${goods.price || 3.89}`;
+            document.getElementById('detailPriceUnit').textContent = `/份`;
+            document.getElementById('detailSales').textContent = `已售${goods.sales || 300}`;
+            document.getElementById('detailProductName').textContent = goods.name || '500g-550g/份 云南小娃娃菜';
+            
+            // 填充产品信息
+            document.getElementById('detailCategory').textContent = goods.category || '黄心白菜';
+            document.getElementById('detailSpec').textContent = goods.spec || '500g-550g/份';
+            document.getElementById('detailAddress').textContent = goods.address || '云南省昆明市乡村县';
+            document.getElementById('detailShelfLife').textContent = goods.shelf_life || '三天';
+            document.getElementById('detailPackage').textContent = goods.package_method || '袋装';
+            document.getElementById('detailPesticide').textContent = goods.pesticide_used || '否';
+            document.getElementById('detailStorage').textContent = goods.storage_method || '常温';
+            document.getElementById('detailPickup').textContent = goods.support_pickup || '是';
+            
+            // 填充描述
+            document.getElementById('detailDescContent').textContent = goods.description || '优质娃娃菜，现摘现邮。买后一天内发货。涮火锅炒菜都好吃！';
+            
+            // 填充联系信息
+            document.getElementById('contactName').textContent = goods.seller_name || '我是昵称';
+            document.getElementById('contactAddress').textContent = goods.seller_address || '云南省昆明市';
+            document.getElementById('contactPhone').textContent = `电话：${goods.seller_phone || '122334455667'}`;
+            
+            // 显示详情页
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById('detailPage').classList.add('active');
+            document.querySelector('.tab-bar').style.display = 'none';
+            
+            // 重置查看全部状态
+            infoExpand.classList.remove('show-all');
+            viewAllBtn.textContent = '查看全部';
+        }
+
+        // ========== 商品列表页逻辑（保留） ==========
+        // Tab切换
+        tabItems.forEach(item => {
+            item.addEventListener('click', () => {
+                tabItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                const targetPageId = item.getAttribute('data-page');
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                    if (page.id === targetPageId) {
+                        page.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // 地址选择弹窗
+        const cityBtn = document.getElementById('cityBtn');
+        const cityModal = document.getElementById('cityModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const confirmBtn = document.getElementById('confirmBtn');
+        
+        cityBtn.addEventListener('click', () => {
+            cityModal.style.display = 'flex';
+        });
+        cancelBtn.addEventListener('click', () => {
+            cityModal.style.display = 'none';
+        });
+        confirmBtn.addEventListener('click', () => {
+            const inputVal = document.querySelector('.manual-input input').value;
+            if (inputVal) {
+                cityBtn.textContent = inputVal;
+            }
+            cityModal.style.display = 'none';
+        });
+
+        // 分类筛选
+        const categoryItems = document.querySelectorAll('.category .item');
+        categoryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                categoryItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                renderGoodsList(searchInput.value.trim());
+            });
+        });
+
+        // 渲染商品列表
+        const goodsList = document.getElementById('goodsList');
+        const loadingTip = document.getElementById('loadingTip');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchTips = document.getElementById('searchTips');
+        
+        async function renderGoodsList(keyword = '') {
+            loadingTip.style.display = 'block';
+            try {
+                const response = await axios.get(`${BASE_API_URL}/products`, {
+                    params: {
+                        keyword: keyword,
+                        page: 1,
+                        size: 20
+                    }
+                });
+                const products = response.data.data || [];
+                loadingTip.style.display = 'none';
+                
+                goodsList.innerHTML = '';
+                if (products.length === 0) {
+                    goodsList.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">暂无相关农产品</div>';
+                    return;
+                }
+                
+                products.forEach(item => {
+                    const goodsItem = document.createElement('div');
+                    goodsItem.className = 'goods-item';
+                    goodsItem.setAttribute('data-id', item.id);
+                    goodsItem.innerHTML = `
+                        <div class="name">${item.name || '未命名农产品'}</div>
+                        <div class="spec">${item.spec || '无规格信息'}</div>
+                        <div class="price">¥${item.price || 0.00}</div>
+                        <div class="origin">产地：${item.address || '未知产地'}</div>
+                        <div class="contact">库存：${item.stock || 0}件</div>
+                    `;
+                    goodsList.appendChild(goodsItem);
+
+                    // 点击查看详情
+                    goodsItem.addEventListener('click', async () => {
+                        const detail = await getProductDetail(item.id);
+                        if (detail) {
+                            showGoodsDetail(detail);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('获取商品列表失败：', error);
+                loadingTip.style.display = 'none';
+                if (error.response?.status !== 401) {
+                    showToast('获取商品列表失败，请重试');
+                }
+                goodsList.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">加载失败，请重试</div>';
+            }
+        }
+
+        // 获取商品详情
+        async function getProductDetail(id) {
+            try {
+                const response = await axios.get(`${BASE_API_URL}/products/${id}`);
+                return response.data.data;
+            } catch (error) {
+                console.error('获取商品详情失败：', error);
+                if (error.response?.status !== 401) {
+                    showToast('获取商品详情失败，请重试');
+                }
+                return null;
+            }
+        }
+
+        // 搜索逻辑
+        const handleSearch = debounce(async function() {
+            const keyword = searchInput.value.trim();
+            await renderGoodsList(keyword);
+            searchTips.style.display = keyword ? 'block' : 'none';
+        });
+
+        searchInput.addEventListener('input', handleSearch);
+        searchBtn.addEventListener('click', async () => {
+            const keyword = searchInput.value.trim();
+            await renderGoodsList(keyword);
+            searchTips.style.display = 'none';
+        });
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchTips.contains(e.target) && !searchBtn.contains(e.target)) {
+                searchTips.style.display = 'none';
+            }
+        });
+
+        // 初始化
+        renderGoodsList();
+    </script>
+</body>
+</html>
