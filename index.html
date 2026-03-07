@@ -173,6 +173,33 @@
             border-radius: 8px;
             padding: 20px;
         }
+        /* 城市选择弹窗 - 手动输入地址样式（美化） */
+        .manual-input {
+            margin: 15px 0;
+        }
+        .manual-input input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: #f9f9f9;
+        }
+        .manual-input input::placeholder {
+            color: #999;
+            font-size: 13px;
+        }
+        .manual-input input:focus {
+            border-color: #0088ff;
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.1);
+        }
+        .manual-input input:hover {
+            border-color: #ddd;
+        }
         .goods-list {
             padding: 10px 15px;
         }
@@ -390,25 +417,56 @@
             text-align: center;
             margin-bottom: 15px;
         }
+        /* 地址选择弹窗 - 地址输入框样式（美化） */
         .address-input {
             width: 100%;
-            padding: 10px;
+            padding: 12px 15px;
             border: 1px solid #eee;
             border-radius: 8px;
             font-size: 14px;
-            margin-bottom: 10px;
+            color: #333;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
         }
+        .address-input::placeholder {
+            color: #999;
+            font-size: 13px;
+        }
+        .address-input:focus {
+            border-color: #0088ff;
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(0, 136, 255, 0.1);
+        }
+        .address-input:hover {
+            border-color: #ddd;
+        }
+        /* 地址选择弹窗 - 定位按钮样式（美化） */
         .location-btn {
             width: 100%;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border: 1px solid #eee;
+            padding: 12px 10px;
+            background-color: #f0f8ff;
+            border: 1px solid #e6f7ff;
             border-radius: 8px;
             text-align: center;
             font-size: 14px;
-            color: #666;
+            color: #0088ff;
             margin-bottom: 15px;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .location-btn:hover {
+            background-color: #e6f7ff;
+            border-color: #91d5ff;
+        }
+        /* 地址提示文字样式（美化） */
+        .address-tips {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            padding-left: 2px;
         }
 
         /* ========== 商品详情页样式 ========== */
